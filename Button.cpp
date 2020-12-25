@@ -1,15 +1,37 @@
 
 #include "Button.h"
+#include <SDL2/SDL_image.h>
 
-Button::Button(int x, int y, int width, int height) {
+Button::Button(std::string textureName, int buttonType, int x, int y, int width, int height) {
+    std::string fullTexture = "Resources/" + textureName + ".png";
+    std::string fullDownTexture = "Resources/" + textureName + "_DOWN.png";
+    this->textureName = new char[fullTexture.length()+1];
+    this->downTextureName = new char[fullDownTexture.length()+1];
+    strcpy(this->textureName, fullTexture.c_str());
+    strcpy(this->downTextureName, fullDownTexture.c_str());
+    this->buttonType = buttonType;
+
     surface = {x, y, width, height};
     isPressed = false;
 }
 
+Button::Button() {}
 Button::~Button() {}
+
 
 void Button::setRenderer(SDL_Renderer* renderer) {
     this->renderer = renderer;
+    this->texture = SDL_CreateTextureFromSurface(renderer, IMG_Load(textureName));
+    SDL_Surface* downImage = IMG_Load(downTextureName);
+    if(downImage) {
+        this->downTexture = SDL_CreateTextureFromSurface(renderer, downImage);
+    }else{
+        this->downTexture = this->texture;
+    }
+}
+
+int Button::getType() {
+    return this->buttonType;
 }
 
 bool Button::clicked() {
@@ -38,9 +60,8 @@ bool Button::pressed() {
 
 void Button::draw() {
     if(isPressed) {
-        SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
+        SDL_RenderCopy(renderer, downTexture, NULL, &surface);
     } else {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderCopy(renderer, texture, NULL, &surface);
     }
-    SDL_RenderFillRect(renderer, &surface);
 }

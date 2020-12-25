@@ -6,7 +6,7 @@
 
 class Tile {
     public:
-        Tile(int x, int y);
+        Tile(SDL_Renderer* renderer, int x, int y);
         ~Tile();
 
         void draw();
@@ -26,6 +26,7 @@ class Tile {
 
     private:
         SDL_Renderer* renderer;
+        SDL_Texture* texture;
         SDL_Point position;
 
         BoundingBox boundingBox;

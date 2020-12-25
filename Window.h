@@ -9,6 +9,7 @@
 #include "Tile.h"
 #include "MapReader.h"
 #include "Button.h"
+#include "Projectile.h"
 
 class Window {
     public:
@@ -21,8 +22,11 @@ class Window {
         void update();
         void draw();
 
+        void pause();
+
         void addPlayer(Player* player);
         void addZombie(Zombie* zombie);
+        void addButton(Button* button);
         void addTile(Tile tile);
 
         SDL_Point getMapTileDimensions();
@@ -39,11 +43,14 @@ class Window {
         char* title;
         int width;
         int height;
+
         Player* player;
         std::vector<Tile>* tiles;
         std::vector<Zombie> zombies;
+        std::vector<Button> buttons;
+        std::vector<Projectile> projectiles;
 
-        SDL_Texture* testImage;
+        bool paused;
 };
 
 #endif

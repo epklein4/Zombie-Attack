@@ -18,6 +18,7 @@ class Entity{
         void setVelocityX(int x);
         void setVelocityY(int y);
 
+        SDL_Point getPostition();
         BoundingBox getBoundingBox();
 
         void updateBoundingBox();

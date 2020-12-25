@@ -1,22 +1,25 @@
 #include "Tile.h"
 
+#include <SDL2/SDL_image.h>
+
 #include <cstdio>
 
 void Tile::printDimensions() {
     printf("Dimensions:\nx: %d  y: %d\nw: %d  h: %d\n", position.x, position.y, width, height);
 }
 
-Tile::Tile(int x, int y) {
+Tile::Tile(SDL_Renderer* renderer, int x, int y) {
     this->position.x = x;
     this->position.y = y;
+    this->renderer = renderer;
+    this->texture = SDL_CreateTextureFromSurface(renderer, IMG_Load("Resources/Tile.png"));
 }
 
 Tile::~Tile() {}
 
 void Tile::draw() {
     SDL_Rect model{position.x, position.y, width, height};
-    SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
-    SDL_RenderFillRect(renderer, &model);
+    SDL_RenderCopy(renderer, texture, NULL, &model);
 }
 
 void Tile::updateBoundingBox() {
@@ -42,6 +45,7 @@ void Tile::setHeight(int height) {
 
 void Tile::setRenderer(SDL_Renderer* renderer) {
     this->renderer = renderer;
+    this->texture = SDL_CreateTextureFromSurface(renderer, IMG_Load("Resources/Tile.png"));
 }
 
 BoundingBox Tile::getBoundingBox() {

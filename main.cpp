@@ -1,7 +1,9 @@
 #include "Window.h"
-#include "Player.h"
+#include "Entity.h"
+#include "Button.h"
 
 int main(int argc, char* argv[]) {
+
     Window window((char*)"Zombie Attack", 800, 600);
 
     bool running = true;
@@ -12,6 +14,11 @@ int main(int argc, char* argv[]) {
 
     window.addPlayer(&player);
     window.addZombie(&zombie);
+
+    for(int i = 0; i < 20; i++) {
+        Zombie* zombie = new Zombie(700, 50 + i*20, 10, 10);
+        window.addZombie(zombie);
+    }
 
     while(running) {
         running = window.pollEvents();

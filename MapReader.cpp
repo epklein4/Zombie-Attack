@@ -58,7 +58,8 @@ void MapReader::generateTiles() {
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < cols; j++) {
             if(map[i][j] == WALL) {
-                Tile tile(j * tileWidth,
+                Tile tile(nullptr,
+                          j * tileWidth,
                           i * tileHeight);
                 tile.setHeight(tileHeight);
                 tile.setWidth(tileWidth);

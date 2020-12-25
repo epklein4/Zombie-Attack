@@ -20,6 +20,10 @@ void Entity::setRenderer(SDL_Renderer* renderer) {
 void Entity::setVelocityX(int x) { velocity.x = x; }
 void Entity::setVelocityY(int y) { velocity.y = y; }
 
+SDL_Point Entity::getPostition() {
+    return position;
+}
+
 BoundingBox Entity::getBoundingBox() {
     return this->boundingBox;
 }
