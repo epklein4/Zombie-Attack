@@ -13,7 +13,6 @@ class Player : public Entity {
         void readInputs(SDL_Event* event);
 
         void calculateMovement();
-        void checkMovementCollision(BoundingBox other);
         void applyMovement();
 
         Projectile* fire();

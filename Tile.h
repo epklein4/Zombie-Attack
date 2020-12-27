@@ -7,6 +7,7 @@
 class Tile {
     public:
         Tile(SDL_Renderer* renderer, int x, int y);
+        Tile(SDL_Renderer* renderer, int x, int y, int w, int h);
         ~Tile();
 
         void draw();
@@ -22,6 +23,7 @@ class Tile {
 
         void printDimensions();
 
+        SDL_Point getDimensions();
         BoundingBox getBoundingBox();
 
     private:

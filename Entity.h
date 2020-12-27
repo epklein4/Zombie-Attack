@@ -18,7 +18,14 @@ class Entity{
         void setVelocityX(int x);
         void setVelocityY(int y);
 
+        int getVelocityX();
+        int getVelocityY();
+
+        void checkMovementCollision(BoundingBox other);
+        void applyMovement();
+
         SDL_Point getPostition();
+        SDL_Point getDimensions();
         BoundingBox getBoundingBox();
 
         void updateBoundingBox();
@@ -30,7 +37,7 @@ class Entity{
 
     protected:
         SDL_Point position;
-        SDL_Point velocity;
+        SDL_Point* velocity;
         SDL_Color color;
         int xSpeed;
         int ySpeed;

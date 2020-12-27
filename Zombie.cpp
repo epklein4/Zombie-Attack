@@ -7,3 +7,4 @@ Zombie::Zombie(int x, int y, int w, int h) : Entity(x, y, w, h) {
 
 Zombie::~Zombie() {}
 
+

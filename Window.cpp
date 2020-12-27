@@ -2,7 +2,7 @@
 
 //window constructor
 Window::Window(char* title, int width, int height) {
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
     this->width = width;
     this->height = height;
@@ -14,11 +14,20 @@ Window::Window(char* title, int width, int height) {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     SDL_SetWindowMinimumSize(window, 800, 600);
     SDL_SetWindowResizable(window, SDL_FALSE);
+
+    Mix_OpenAudio(MIX_DEFAULT_FREQUENCY,
+                  MIX_DEFAULT_FORMAT,
+                  1, 2048);
+
+    bgMusic = Mix_LoadMUS("Resources/BG_Music.wav");
+    bulletSFX = Mix_LoadWAV("Resources/BulletSFX.wav");
+    Mix_PlayMusic(bgMusic, -1);
 }
 
 Window::~Window() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    Mix_CloseAudio();
     IMG_Quit();
     SDL_Quit();
 }
@@ -26,6 +35,7 @@ Window::~Window() {
 void Window::startMap() {
     map.init("Resources/tilemap.txt", width, height);
     setTiles(map.getTiles());
+    pathfinder = new Pathfinder(map.getDimensions().x, map.getDimensions().y, tiles);
 }
 
 void Window::clear() {
@@ -35,12 +45,14 @@ void Window::clear() {
 
 void Window::update() {
     if(paused) {
-
     }else if(player != NULL) {
+        pathfinder->setGoal(player->getPostition().x + (player->getDimensions().x / 2),
+                            player->getPostition().y + (player->getDimensions().x / 2));
         player->updateBoundingBox();
         if(player->getShooting()) {
             Projectile* projectile = player->fire();
             if(projectile != nullptr) {
+                Mix_PlayChannel(-1, bulletSFX, 0);
                 projectiles.push_back(*projectile);
             }
         }
@@ -50,9 +62,15 @@ void Window::update() {
         }
         for(Zombie &zombie : zombies) {
             zombie.updateBoundingBox();
+            //test movement
+            zombie.setVelocityX(5);
+            for(Tile &tile : *tiles) {
+                zombie.checkMovementCollision(tile.getBoundingBox());   
+            }
             if(player->getBoundingBox().checkCollision(zombie.getBoundingBox())) {
                 player->kill();
             }
+            zombie.applyMovement();
         }
         for(int i = 0; i < projectiles.size(); i++) {
             projectiles.at(i).update();
@@ -107,7 +125,9 @@ void Window::pause() {
         Button quitButton("BUTTON_QUIT", QUIT_BUTTON, 50, 150, 192, 64);
         buttons.push_back(pauseImage);
         buttons.push_back(quitButton);
+        Mix_PauseMusic();
     } else {
+        Mix_ResumeMusic();
         buttons.clear();
     }
 }

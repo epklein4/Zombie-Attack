@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <vector>
 #include "Player.h"
 #include "Zombie.h"
@@ -10,6 +11,7 @@
 #include "MapReader.h"
 #include "Button.h"
 #include "Projectile.h"
+#include "Pathfinder.h"
 
 class Window {
     public:
@@ -38,6 +40,9 @@ class Window {
         SDL_Window* window;
         SDL_Renderer* renderer;
         SDL_Event event;
+        Mix_Music* bgMusic;
+        Mix_Chunk* bulletSFX;
+        Pathfinder* pathfinder;
         MapReader map;
 
         char* title;

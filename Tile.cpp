@@ -15,6 +15,11 @@ Tile::Tile(SDL_Renderer* renderer, int x, int y) {
     this->texture = SDL_CreateTextureFromSurface(renderer, IMG_Load("Resources/Tile.png"));
 }
 
+Tile::Tile(SDL_Renderer* renderer, int x, int y, int w, int h) : Tile(renderer, x, y) {
+    this->width = w;
+    this->height = h;
+}
+
 Tile::~Tile() {}
 
 void Tile::draw() {
@@ -35,17 +40,17 @@ void Tile::setPosition(int x, int y) {
     this->position.y = y;
 }
 
-void Tile::setWidth(int width) {
-    this->width = width;
-}
+void Tile::setWidth(int width) { this->width = width; }
 
-void Tile::setHeight(int height) {
-    this->height = height;
-}
+void Tile::setHeight(int height) { this->height = height; }
 
 void Tile::setRenderer(SDL_Renderer* renderer) {
     this->renderer = renderer;
     this->texture = SDL_CreateTextureFromSurface(renderer, IMG_Load("Resources/Tile.png"));
+}
+
+SDL_Point Tile::getDimensions() {
+    return {width, height};
 }
 
 BoundingBox Tile::getBoundingBox() {

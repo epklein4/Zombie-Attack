@@ -29,61 +29,37 @@ void Player::readInputs(SDL_Event* event) {
 }
 
 void Player::calculateMovement() {
-    if(inputs["w"] == true) { this->velocity.y -= ySpeed; }
-    if(inputs["a"] == true) { this->velocity.x -= xSpeed; }
-    if(inputs["s"] == true) { this->velocity.y += ySpeed; }
-    if(inputs["d"] == true) { this->velocity.x += xSpeed; }
-}
-
-void Player::checkMovementCollision(BoundingBox other) {
-    BoundingBox movementBoxX;
-    BoundingBox movementBoxY;
-
-    movementBoxX.updateBoundingBox(position.x + velocity.x, position.y, width, height);
-    movementBoxY.updateBoundingBox(position.x, position.y + velocity.y, width, height);
-
-    if(other.checkCollision(movementBoxX)) {
-        if(velocity.x > 0) {
-            position.x += other.getBounds().x - (position.x + width) - 1;
-        } else if(velocity.x < 0) {
-            position.x -= position.x - (other.getBounds().x + other.getBounds().w) - 1;
-        }
-         velocity.x = 0; 
-    }
-    if(other.checkCollision(movementBoxY)) {
-        if(velocity.y > 0) {
-            position.y += other.getBounds().y - (position.y + height) - 1;
-        } else if(velocity.y < 0) {
-            position.y -= position.y - (other.getBounds().y + other.getBounds().h) - 1;
-        }
-         velocity.y = 0; 
-    }
+    if(inputs["w"] == true) { this->velocity->y -= ySpeed; }
+    if(inputs["a"] == true) { this->velocity->x -= xSpeed; }
+    if(inputs["s"] == true) { this->velocity->y += ySpeed; }
+    if(inputs["d"] == true) { this->velocity->x += xSpeed; }
 }
 
 void Player::applyMovement() {
     if(living) {
-        position.x += velocity.x;
-        position.y += velocity.y;
+        position.x += velocity->x;
+        position.y += velocity->y;
     }
-    velocity.x = 0;
-    velocity.y = 0;
+    velocity->x = 0;
+    velocity->y = 0;
 }
 
 Projectile* Player::fire() {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastShotTime);
-    if(elapsedTime > std::chrono::milliseconds(500)) {
-        int velocityX, velocityY;
+    if(elapsedTime > std::chrono::milliseconds(250)) {
+        int mouseX, mouseY;
         double length;
-        SDL_GetMouseState(&velocityX, &velocityY);
-        velocityX -= position.x + ((double)width / 2);
-        velocityY -= position.y + ((double)height / 2);
+        SDL_GetMouseState(&mouseX, &mouseY);
+        double velocityX = mouseX - (position.x + ((double)width / 2));
+        double velocityY = mouseY - (position.y + ((double)height / 2));
         length = SDL_sqrt(SDL_pow(velocityX, 2) + SDL_pow(velocityY, 2));
-        velocityX = ((double)velocityX / length) * 10;
-        velocityY = ((double)velocityY / length) * 10;
-        SDL_Point velocities = {velocityX, velocityY};
+        velocityX = (velocityX / length) * 10;
+        velocityY = (velocityY / length) * 10;
 
-        Projectile* projectile = new Projectile(position.x + ((double)width / 2), position.y + ((double)height / 2), 5, 5, velocities);
+        Projectile* projectile = new Projectile((int)(position.x + ((double)width / 2)),
+                                                (int)(position.y + ((double)height / 2)),
+                                                 5, 5, velocityX, velocityY);
         lastShotTime = std::chrono::system_clock::now();
         return projectile;
     }

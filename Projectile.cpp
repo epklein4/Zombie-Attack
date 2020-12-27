@@ -3,9 +3,9 @@
 
 #include <cstdio>
 
-Projectile::Projectile(int x, int y, int width, int height, SDL_Point velocities) : Entity(x, y, width, height) {
-    this->xSpeed = velocities.x;
-    this->ySpeed = velocities.y;
+Projectile::Projectile(int x, int y, int width, int height, double speedX, double speedY) : Entity(x, y, width, height) {
+    this->xSpeed = speedX;
+    this->ySpeed = speedY;
     this->color = {0, 0, 0};
 }
 

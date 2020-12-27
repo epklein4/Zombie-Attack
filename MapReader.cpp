@@ -60,9 +60,9 @@ void MapReader::generateTiles() {
             if(map[i][j] == WALL) {
                 Tile tile(nullptr,
                           j * tileWidth,
-                          i * tileHeight);
-                tile.setHeight(tileHeight);
-                tile.setWidth(tileWidth);
+                          i * tileHeight,
+                          tileWidth,
+                          tileHeight);
                 tiles.push_back(tile);
             }
         }
