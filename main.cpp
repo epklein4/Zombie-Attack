@@ -9,15 +9,15 @@ int main(int argc, char* argv[]) {
     bool running = true;
 
     window.startMap();
-    Player player(30, 30, 20, 20, window.getMapTileDimensions().x, window.getMapTileDimensions().y);
-    Zombie zombie(400, 400, 30, 30);
+    Player player(400, 300, 20, 20, window.getMapTileDimensions().x, window.getMapTileDimensions().y);
 
     window.addPlayer(&player);
-    window.addZombie(&zombie);
 
-    for(int i = 0; i < 20; i++) {
-        Zombie* zombie = new Zombie(700, 50 + i*20, 10, 10);
-        window.addZombie(zombie);
+    for(int i = 0; i < 10; i++) {
+        for(int j = 0; j < 2; j++) {
+            Zombie* zombie = new Zombie(400 + j*20, 100 + i*20, 15, 15);
+            window.addZombie(zombie);
+        }
     }
 
     while(running) {

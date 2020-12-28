@@ -19,6 +19,9 @@ void Entity::setRenderer(SDL_Renderer* renderer) {
 void Entity::setVelocityX(int x) { velocity->x = x; }
 void Entity::setVelocityY(int y) { velocity->y = y; }
 
+void Entity::addVelocityX(int x) { velocity->x += x; }
+void Entity::addVelocityY(int y) { velocity->y += y; }
+
 int Entity::getVelocityX() { return velocity->x; }
 int Entity::getVelocityY() { return velocity->y; }
 
@@ -48,10 +51,12 @@ void Entity::checkMovementCollision(BoundingBox other) {
 }
 
 void Entity::applyMovement() {
+    if(velocity->x > xSpeed) { velocity->x = xSpeed; }
+    if(velocity->y > ySpeed) { velocity->y = ySpeed; }
+    if(velocity->x < -xSpeed) { velocity->x = -xSpeed; }
+    if(velocity->y < -ySpeed) { velocity->y = -ySpeed; }
     position.x += velocity->x;
     position.y += velocity->y;
-    velocity->x = 0;
-    velocity->y = 0;
 }
 
 SDL_Point Entity::getPostition() {

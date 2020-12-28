@@ -76,6 +76,7 @@ void Player::setShooting(bool shooting) {
 }
 
 bool Player::getShooting() {
+    if(!living) { return false; }
     return shooting;
 }
 

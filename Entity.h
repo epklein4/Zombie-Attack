@@ -17,6 +17,8 @@ class Entity{
 
         void setVelocityX(int x);
         void setVelocityY(int y);
+        void addVelocityX(int x);
+        void addVelocityY(int y);
 
         int getVelocityX();
         int getVelocityY();

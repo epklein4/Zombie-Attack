@@ -37,12 +37,13 @@ int Button::getType() {
 bool Button::clicked() {
     int mouseX;
     int mouseY;
-    isPressed = false;
     SDL_GetMouseState(&mouseX, &mouseY);
     if((mouseX > surface.x && mouseX < surface.x + surface.w) &&
-       (mouseY > surface.y && mouseY < surface.y + surface.h)) {
+       (mouseY > surface.y && mouseY < surface.y + surface.h) && isPressed) {
+        isPressed = false;
         return true;
     }
+    isPressed = false;
     return false;
 }
 

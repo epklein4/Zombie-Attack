@@ -7,8 +7,9 @@
 #include <vector>
 #include <SDL2/SDL.h>
 
+#define GOAL 0
 #define NOT_PATHABLE -1
-#define UNPATHED 0
+#define UNPATHED -2
 
 class Pathfinder {
     public:
@@ -22,14 +23,18 @@ class Pathfinder {
         SDL_Point getPath(int x, int y);
 
     private:
-        int** pathable;
+        int** pathDist;
+        bool** visited;
         SDL_Point** paths;
         SDL_Point tileDimensions;
+        int rows;
+        int cols;
 
         int goalRow;
         int goalCol;
 
-
+        void calculatePathField();
+        void BTS(int row, int col, int value);
 };
 
 

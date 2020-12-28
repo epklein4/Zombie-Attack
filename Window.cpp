@@ -62,13 +62,22 @@ void Window::update() {
         }
         for(Zombie &zombie : zombies) {
             zombie.updateBoundingBox();
-            //test movement
-            zombie.setVelocityX(5);
+            //////pathing code to be implemented into zombie class
+            SDL_Point direction = pathfinder->getPath(zombie.getPostition().x + (zombie.getDimensions().x / 2),
+                                                      zombie.getPostition().y + (zombie.getDimensions().y / 2));
+            zombie.walk(direction);
+            //////end of pathing code
+            for(Zombie &otherZ : zombies) {
+                if(&otherZ == &zombie) { continue; }
+                zombie.checkMovementCollision(otherZ.getBoundingBox());
+                zombie.updateBoundingBox();
+            }
             for(Tile &tile : *tiles) {
                 zombie.checkMovementCollision(tile.getBoundingBox());   
+                zombie.updateBoundingBox();
             }
             if(player->getBoundingBox().checkCollision(zombie.getBoundingBox())) {
-                player->kill();
+                //player->kill();
             }
             zombie.applyMovement();
         }
