@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <vector>
+#include <chrono>
 #include "Player.h"
 #include "Zombie.h"
 #include "Tile.h"
@@ -12,6 +13,8 @@
 #include "Button.h"
 #include "Projectile.h"
 #include "Pathfinder.h"
+
+#define ZOMBIE_LIMIT 200
 
 class Window {
     public:
@@ -55,7 +58,11 @@ class Window {
         std::vector<Button> buttons;
         std::vector<Projectile> projectiles;
 
+        std::chrono::system_clock::time_point lastSpawned;
+
         bool paused;
+
+        void spawnTimer();
 };
 
 #endif

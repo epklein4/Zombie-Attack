@@ -6,7 +6,7 @@
 
 class Projectile : public Entity{
     public:
-        Projectile(int x, int y, int width, int height , double speedX, double speedY);
+        Projectile(int x, int y, int width, int height , double xSpeed, double ySpeed);
         ~Projectile();
 
         void update();
@@ -14,6 +14,8 @@ class Projectile : public Entity{
     private:
         SDL_Renderer* renderer;
         BoundingBox boundingBox;
+        double x;
+        double y;
         double xSpeed;
         double ySpeed;
 

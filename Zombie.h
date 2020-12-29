@@ -2,6 +2,8 @@
 #define ZOMBIE_H
 
 #include "Entity.h"
+#include "Tile.h"
+#include <vector>
 
 class Zombie : public Entity {
     public:
@@ -9,7 +11,9 @@ class Zombie : public Entity {
         ~Zombie();
 
         void walk(SDL_Point direction);
+        static Zombie* spawn(int windowWidth, int windowHeight, std::vector<Tile>* tiles);
     private:
+        bool spawning;
 };
 
 #endif

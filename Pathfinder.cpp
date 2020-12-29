@@ -61,27 +61,28 @@ void Pathfinder::setGoal(int x, int y) {
         BTS(goalRow, goalCol, pathDist[goalRow][goalCol]);
         calculatePathField();
 
+        /* printf("\n\n");
+        for(int i = 0; i < rows; i++) {
+           for(int j =0; j < cols; j++) {
+               if(pathDist[i][j] == NOT_PATHABLE) { printf("x "); }
+               else { printf("%d ", pathDist[i][j]); }
+           }
+           printf("\n");
+        }               
         printf("\n\n");
-        //for(int i = 0; i < rows; i++) {
-        //    for(int j =0; j < cols; j++) {
-        //        if(pathDist[i][j] == NOT_PATHABLE) { printf("x "); }
-        //        else { printf("%d ", pathDist[i][j]); }
-        //    }
-        //    printf("\n");
-        //}               
-        //printf("\n\n");
-        //for(int i = 0; i < rows; i++) {
-        //    for(int j =0; j < cols; j++) {
-        //        printf("(%d, %d)", paths[i][j].x, paths[i][j].y);
-        //    }
-        //    printf("\n");
-        //}
+        for(int i = 0; i < rows; i++) {
+           for(int j =0; j < cols; j++) {
+               printf("(%d, %d)", paths[i][j].x, paths[i][j].y);
+           }
+           printf("\n");
+        } */
     }
 }
 
 SDL_Point Pathfinder::getPath(int x, int y) {
     int col = x / tileDimensions.x;
     int row = y / tileDimensions.y;
+    if(col < 0 || row < 0 || row >= rows || col >= cols) { return {0, 0}; }
     return paths[row][col];
 }
 

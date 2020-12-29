@@ -1,7 +1,8 @@
 
-OBJS = main.o Window.o Entity.o Player.o Tile.o BoundingBox.o MapReader.o Button.o Zombie.o Projectile.o Pathfinder.o
+OBJS = main.o Window.o Entity.o Player.o Tile.o BoundingBox.o\
+	 MapReader.o Button.o Zombie.o Projectile.o Pathfinder.o
 CPP = g++
-CPPFLAGS = -c
+CPPFLAGS = -c -g
 LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer
 
 ZombieAttack: $(OBJS)

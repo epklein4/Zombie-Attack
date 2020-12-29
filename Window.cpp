@@ -1,4 +1,5 @@
 #include "Window.h"
+#include <time.h>
 
 //window constructor
 Window::Window(char* title, int width, int height) {
@@ -7,6 +8,7 @@ Window::Window(char* title, int width, int height) {
     this->width = width;
     this->height = height;
     this->paused = false;
+    this->lastSpawned = std::chrono::system_clock::now();
     window = SDL_CreateWindow(title,
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
@@ -33,19 +35,23 @@ Window::~Window() {
 }
 
 void Window::startMap() {
+    srand(time(NULL));
     map.init("Resources/tilemap.txt", width, height);
     setTiles(map.getTiles());
     pathfinder = new Pathfinder(map.getDimensions().x, map.getDimensions().y, tiles);
 }
 
 void Window::clear() {
-    SDL_SetRenderDrawColor(renderer, 111, 161, 161, 255);
+    SDL_SetRenderDrawColor(renderer, 240, 235, 192, 255);
     SDL_RenderClear(renderer);
 }
 
 void Window::update() {
     if(paused) {
     }else if(player != NULL) {
+        if(zombies.size() < ZOMBIE_LIMIT) {
+            spawnTimer();
+        }
         pathfinder->setGoal(player->getPostition().x + (player->getDimensions().x / 2),
                             player->getPostition().y + (player->getDimensions().x / 2));
         player->updateBoundingBox();
@@ -77,7 +83,8 @@ void Window::update() {
                 zombie.updateBoundingBox();
             }
             if(player->getBoundingBox().checkCollision(zombie.getBoundingBox())) {
-                //player->kill();
+                player->kill();
+                pause();
             }
             zombie.applyMovement();
         }
@@ -115,13 +122,13 @@ void Window::draw() {
     for(Tile tile : *tiles) { 
         tile.draw(); 
     }
-    for(Button button : buttons) {
-        button.setRenderer(renderer);
-        button.draw();
-    }
     for(Projectile projectile : projectiles) {
         projectile.setRenderer(renderer);
         projectile.draw();
+    }
+    for(Button button : buttons) {
+        button.setRenderer(renderer);
+        button.draw();
     }
     SDL_RenderPresent(renderer);
 }
@@ -141,38 +148,6 @@ void Window::pause() {
     }
 }
 
-void Window::addPlayer(Player* player) {
-    this->player = player;
-    this->player->setRenderer(renderer);
-}
-
-void Window::addZombie(Zombie* zombie) {
-    zombies.push_back(*zombie);
-}
-
-void Window::addTile(Tile tile) {
-    this->tiles->push_back(tile);
-    tile.setRenderer(renderer);
-}
-
-void Window::addButton(Button* button) {
-    this->buttons.push_back(*button);
-    button->setRenderer(renderer);
-}
-
-SDL_Point Window::getMapTileDimensions() {
-    SDL_Point tileDimensions = {map.getTileDimensions().x, map.getTileDimensions().y};
-    return tileDimensions;
-}
-
-void Window::setTiles(std::vector<Tile>* tiles) {
-    this->tiles = tiles;
-    for(Tile &tile : *tiles) {
-        tile.setRenderer(renderer);
-    }
-}
-
-//returns true or false for quit events
 bool Window::pollEvents() {
     bool running = true;
     while(SDL_PollEvent(&event)) {
@@ -212,3 +187,45 @@ bool Window::pollEvents() {
     if(this->player != NULL && !paused) { this->player->calculateMovement(); }
     return running;
 }
+
+void Window::spawnTimer() {
+    auto now = std::chrono::system_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSpawned);
+    if(elapsedTime > std::chrono::milliseconds(1000)) {
+        lastSpawned = std::chrono::system_clock::now();
+        addZombie(Zombie::spawn(width, height, tiles));
+    }
+}
+
+void Window::addPlayer(Player* player) {
+    this->player = player;
+    this->player->setRenderer(renderer);
+}
+
+void Window::addZombie(Zombie* zombie) {
+    if(zombie == nullptr) { return; }
+    zombies.push_back(*zombie);
+}
+
+void Window::addTile(Tile tile) {
+    this->tiles->push_back(tile);
+    tile.setRenderer(renderer);
+}
+
+void Window::addButton(Button* button) {
+    this->buttons.push_back(*button);
+    button->setRenderer(renderer);
+}
+
+SDL_Point Window::getMapTileDimensions() {
+    SDL_Point tileDimensions = {map.getTileDimensions().x, map.getTileDimensions().y};
+    return tileDimensions;
+}
+
+void Window::setTiles(std::vector<Tile>* tiles) {
+    this->tiles = tiles;
+    for(Tile &tile : *tiles) {
+        tile.setRenderer(renderer);
+    }
+}
+
