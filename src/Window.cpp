@@ -168,9 +168,11 @@ void Window::pause() {
     paused = !paused;
     if(paused) {
         buttons.clear();
-        Button pauseImage("PAUSE", -1, 50, 50, 300, 100);
-        Button quitButton("BUTTON_QUIT", QUIT_BUTTON, 50, 150, 192, 64);
+        Button pauseImage("PAUSE", -100, 50, 50, 300, 100);
+        Button restartButton("BUTTON_RESTART", RESTART_BUTTON, 50, 150, 192, 64);
+        Button quitButton("BUTTON_QUIT", QUIT_BUTTON, 50, 230, 192, 64);
         buttons.push_back(pauseImage);
+        buttons.push_back(restartButton);
         buttons.push_back(quitButton);
         Mix_PauseMusic();
     } else {
