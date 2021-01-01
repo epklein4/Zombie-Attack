@@ -21,8 +21,6 @@ class Tile {
         void setHeight(int height);
         void setRenderer(SDL_Renderer* renderer);
 
-        void printDimensions();
-
         SDL_Point getDimensions();
         BoundingBox getBoundingBox();
 

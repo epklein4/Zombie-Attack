@@ -28,6 +28,7 @@ class Window {
         void draw();
 
         void pause();
+        void restart();
 
         void addPlayer(Player* player);
         void addZombie(Zombie* zombie);
@@ -45,6 +46,7 @@ class Window {
         SDL_Event event;
         Mix_Music* bgMusic;
         Mix_Chunk* bulletSFX;
+        SDL_Texture* cursor;
         Pathfinder* pathfinder;
         MapReader map;
 
@@ -61,6 +63,7 @@ class Window {
         std::chrono::system_clock::time_point lastSpawned;
 
         bool paused;
+        bool restarted;
 
         void spawnTimer();
 };

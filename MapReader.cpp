@@ -4,6 +4,10 @@
 
 MapReader::MapReader() {}
 
+/*
+ * Close the tile map file
+ * Delete the map from memory
+ */
 MapReader::~MapReader() {
     this->mapfile.close();
     for(int i = rows - 1; i >= 0; i--) {
@@ -12,6 +16,11 @@ MapReader::~MapReader() {
     delete map;
 }
 
+/*
+ *  Initialize the map reader with the tilemap files name and the windows width and height
+ * 
+ *  Generates the map and tile list for the map
+ */
 void MapReader::init(std::string mapname, int windowWidth, int windowHeight) {
     this->mapfile.open(mapname);
     std::string line;
@@ -36,6 +45,9 @@ void MapReader::init(std::string mapname, int windowWidth, int windowHeight) {
     generateTiles();
 }
 
+/*
+ *  Generates the map from each line of the tilemap file
+ */
 void MapReader::generateMap() {
     std::string line;
 
@@ -53,6 +65,9 @@ void MapReader::generateMap() {
     }
 }
 
+/*
+ *  Generates the tiles from the map 2d array
+ */
 void MapReader::generateTiles() {
     tiles.reserve(rows * cols);
     for(int i = 0; i < rows; i++) {
@@ -69,6 +84,9 @@ void MapReader::generateTiles() {
     }
 }
 
+/*
+ *  Resizes the tiles to match the new dimensions of the their display window
+ */
 void MapReader::resize(int windowWidth, int windowHeight) {
     int oldTileWidth = this->tileWidth;
     int oldTileHeight = this->tileHeight;
@@ -83,16 +101,25 @@ void MapReader::resize(int windowWidth, int windowHeight) {
     }
 }
 
+/*
+ *  Gets the rows and cols of the map
+ */
 SDL_Point MapReader::getDimensions() {
     SDL_Point dimensions = {rows, cols};
     return dimensions;
 }
 
+/*
+ *  Gets the dimensions of the tiles of the map
+ */
 SDL_Point MapReader::getTileDimensions() {
     SDL_Point tileDimensions = {tileWidth, tileHeight};
     return tileDimensions;
 }
 
+/*
+ *  Gets the list of tiles in the map
+ */
 std::vector<Tile>* MapReader::getTiles() {
     return &tiles;
 }

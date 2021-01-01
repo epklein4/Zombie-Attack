@@ -1,16 +1,20 @@
 #include "Pathfinder.h"
 #include <queue>
 
-#include <cstdio>
-
 Pathfinder::Pathfinder() {}
 
+/*
+ *  Creates a pathfinder with rows, cols, and a list of tiles in the level
+ */
 Pathfinder::Pathfinder(int rows, int cols, std::vector<Tile>* tiles) {
     createPathfinder(rows, cols, tiles);
 }
 
 Pathfinder::~Pathfinder() {}
 
+/*
+ *  Method for initializing a pathfinder given rows, cols, and a list of tiles in the level
+ */
 void Pathfinder::createPathfinder(int rows, int cols, std::vector<Tile>* tiles) {
     this->rows = rows;
     this->cols = cols;
@@ -41,6 +45,11 @@ void Pathfinder::createPathfinder(int rows, int cols, std::vector<Tile>* tiles) 
     }
 }
 
+/*
+ *  Checks if the goal has moved(the goal being the position of the player),
+ *  and if it has creates an array of pathable positions and using a Breath-First Search
+ *  creates paths to the goal from the pathable position on the map.
+ */
 void Pathfinder::setGoal(int x, int y) {
     int oldCol = goalCol;
     int oldRow = goalRow;
@@ -60,25 +69,12 @@ void Pathfinder::setGoal(int x, int y) {
         pathDist[goalRow][goalCol] = GOAL;
         BTS(goalRow, goalCol, pathDist[goalRow][goalCol]);
         calculatePathField();
-
-        /* printf("\n\n");
-        for(int i = 0; i < rows; i++) {
-           for(int j =0; j < cols; j++) {
-               if(pathDist[i][j] == NOT_PATHABLE) { printf("x "); }
-               else { printf("%d ", pathDist[i][j]); }
-           }
-           printf("\n");
-        }               
-        printf("\n\n");
-        for(int i = 0; i < rows; i++) {
-           for(int j =0; j < cols; j++) {
-               printf("(%d, %d)", paths[i][j].x, paths[i][j].y);
-           }
-           printf("\n");
-        } */
     }
 }
 
+/*
+ *  Gets the path from a given position to the goal using the paths 2d array
+ */
 SDL_Point Pathfinder::getPath(int x, int y) {
     int col = x / tileDimensions.x;
     int row = y / tileDimensions.y;
@@ -86,6 +82,9 @@ SDL_Point Pathfinder::getPath(int x, int y) {
     return paths[row][col];
 }
 
+/*
+ *  updates the field of path vectors to the goal
+ */
 void Pathfinder::calculatePathField() {
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < cols; j++) {
@@ -109,6 +108,13 @@ void Pathfinder::calculatePathField() {
     }
 }
 
+/*
+ *  Uses a Breadth-First Search to find the the distance from every pathable tile to
+ *  the goal(player).
+ * 
+ *  For further information of a Breadth-First Search:
+ *  (https://en.wikipedia.org/wiki/Breadth-first_search)
+ */
 void Pathfinder::BTS(int row, int col, int value) {
     visited[row][col] = true;
     std::queue<SDL_Rect> queue;

@@ -3,7 +3,7 @@ OBJS = main.o Window.o Entity.o Player.o Tile.o BoundingBox.o\
 	 MapReader.o Button.o Zombie.o Projectile.o Pathfinder.o
 CPP = g++
 CPPFLAGS = -c -g
-LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer
+LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -mwindows
 
 ZombieAttack: $(OBJS)
 	$(CPP) -o ZombieAttack $(OBJS) $(LDFLAGS)

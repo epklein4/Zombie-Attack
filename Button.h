@@ -4,7 +4,8 @@
 #include <SDL2/SDL.h>
 #include <string>
 
-#define QUIT_BUTTON 0
+#define QUIT_BUTTON -1
+#define RESTART_BUTTON 0
 
 class Button {
     public:

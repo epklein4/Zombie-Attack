@@ -2,6 +2,12 @@
 #include "Button.h"
 #include <SDL2/SDL_image.h>
 
+/*
+ *  Constructor for a new button object
+ *  Requires the button's name, type, position, and dimensions
+ * 
+ *  Loads the image for the down and up positions of the button
+ */
 Button::Button(std::string textureName, int buttonType, int x, int y, int width, int height) {
     std::string fullTexture = "Resources/" + textureName + ".png";
     std::string fullDownTexture = "Resources/" + textureName + "_DOWN.png";
@@ -18,7 +24,12 @@ Button::Button(std::string textureName, int buttonType, int x, int y, int width,
 Button::Button() {}
 Button::~Button() {}
 
-
+/*
+ *  Sets the SDL Renderer of for drawing 
+ *  Loads the down and up images to an SDL surface
+ *  
+ *  If there is no down image, uses the up image instead
+ */
 void Button::setRenderer(SDL_Renderer* renderer) {
     this->renderer = renderer;
     this->texture = SDL_CreateTextureFromSurface(renderer, IMG_Load(textureName));
@@ -30,10 +41,17 @@ void Button::setRenderer(SDL_Renderer* renderer) {
     }
 }
 
+/*
+ *  Returns the type of button for interpreting what to do on a click event
+ */
 int Button::getType() {
     return this->buttonType;
 }
 
+/* 
+ *  Returns true if the button is was pressed and is then released while the mouse
+ *  is still over the button
+ */
 bool Button::clicked() {
     int mouseX;
     int mouseY;
@@ -47,6 +65,10 @@ bool Button::clicked() {
     return false;
 }
 
+/*
+ *  Returns true if the button is pressed(The left mouse button is down while the
+ *  cursor is over the button)
+ */
 bool Button::pressed() {
     int mouseX;
     int mouseY;
@@ -59,6 +81,9 @@ bool Button::pressed() {
     return false;
 }
 
+/*
+ *  Draws the button to its given renderer based on its current pressed state
+ */
 void Button::draw() {
     if(isPressed) {
         SDL_RenderCopy(renderer, downTexture, NULL, &surface);

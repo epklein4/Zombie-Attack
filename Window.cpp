@@ -1,7 +1,10 @@
 #include "Window.h"
 #include <time.h>
 
-//window constructor
+/*
+ *  Creates the window for displaying to the user
+ *  Also initizializes music and SFX
+ */
 Window::Window(char* title, int width, int height) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
@@ -17,6 +20,9 @@ Window::Window(char* title, int width, int height) {
     SDL_SetWindowMinimumSize(window, 800, 600);
     SDL_SetWindowResizable(window, SDL_FALSE);
 
+    SDL_ShowCursor(0);
+    cursor = SDL_CreateTextureFromSurface(renderer, IMG_Load("Resources/CROSSHAIR.png"));
+    
     Mix_OpenAudio(MIX_DEFAULT_FREQUENCY,
                   MIX_DEFAULT_FORMAT,
                   1, 2048);
@@ -26,6 +32,9 @@ Window::Window(char* title, int width, int height) {
     Mix_PlayMusic(bgMusic, -1);
 }
 
+/*
+ *  Destroys SDL resources
+ */
 Window::~Window() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
@@ -34,6 +43,10 @@ Window::~Window() {
     SDL_Quit();
 }
 
+/*
+ *  Starts the map for a level
+ *  Initializes the maps pathfinder
+ */
 void Window::startMap() {
     srand(time(NULL));
     map.init("Resources/tilemap.txt", width, height);
@@ -41,11 +54,19 @@ void Window::startMap() {
     pathfinder = new Pathfinder(map.getDimensions().x, map.getDimensions().y, tiles);
 }
 
+/*
+ *  Clears the window
+ */
 void Window::clear() {
     SDL_SetRenderDrawColor(renderer, 240, 235, 192, 255);
     SDL_RenderClear(renderer);
 }
 
+/*
+ *  Logic for interaction between different world objects
+ * 
+ *  If the game is paused no updates to logic will occur
+ */
 void Window::update() {
     if(paused) {
     }else if(player != NULL) {
@@ -68,11 +89,9 @@ void Window::update() {
         }
         for(Zombie &zombie : zombies) {
             zombie.updateBoundingBox();
-            //////pathing code to be implemented into zombie class
             SDL_Point direction = pathfinder->getPath(zombie.getPostition().x + (zombie.getDimensions().x / 2),
                                                       zombie.getPostition().y + (zombie.getDimensions().y / 2));
             zombie.walk(direction);
-            //////end of pathing code
             for(Zombie &otherZ : zombies) {
                 if(&otherZ == &zombie) { continue; }
                 zombie.checkMovementCollision(otherZ.getBoundingBox());
@@ -113,7 +132,13 @@ void Window::update() {
     }
 }
 
+/*
+ *  Draws everything in the window
+ */
 void Window::draw() {
+    int mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+    SDL_Rect cursorRect{mouseX-8, mouseY-8, 16, 16};
     if(player != NULL) { player->draw(); }
     for(Zombie zombie : zombies) {
         zombie.setRenderer(renderer);
@@ -130,9 +155,15 @@ void Window::draw() {
         button.setRenderer(renderer);
         button.draw();
     }
+    SDL_RenderCopy(renderer, cursor, NULL, &cursorRect);
     SDL_RenderPresent(renderer);
 }
 
+/*
+ *  Pauses and unpauses the game
+ * 
+ *  During pauses creates ui elements for navigation
+ */
 void Window::pause() {
     paused = !paused;
     if(paused) {
@@ -148,6 +179,19 @@ void Window::pause() {
     }
 }
 
+/*  ////UNIMPLEMENTED////
+ *  Restarts the level
+ */
+void Window::restart() {
+    tiles->clear();
+    buttons.clear();
+    zombies.clear();
+    projectiles.clear();
+}
+
+/*
+ *  Polls for user input and begins interpretting
+ */
 bool Window::pollEvents() {
     bool running = true;
     while(SDL_PollEvent(&event)) {
@@ -158,6 +202,7 @@ bool Window::pollEvents() {
                     if(button.clicked()) {
                         switch(button.getType()) {
                             case QUIT_BUTTON: running = false; break;
+                            case RESTART_BUTTON: restarted = true; break;
                         }
                     }
                 }
@@ -188,6 +233,9 @@ bool Window::pollEvents() {
     return running;
 }
 
+/*
+ *  Spawns a zombie if a interval has passed
+ */
 void Window::spawnTimer() {
     auto now = std::chrono::system_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSpawned);
@@ -197,31 +245,49 @@ void Window::spawnTimer() {
     }
 }
 
+/*
+ *  Adds the player to the world
+ */
 void Window::addPlayer(Player* player) {
     this->player = player;
     this->player->setRenderer(renderer);
 }
 
+/*
+ *  Adds a zombie to the world
+ */
 void Window::addZombie(Zombie* zombie) {
     if(zombie == nullptr) { return; }
     zombies.push_back(*zombie);
 }
 
+/*
+ *  Adds a tile to the world
+ */
 void Window::addTile(Tile tile) {
     this->tiles->push_back(tile);
     tile.setRenderer(renderer);
 }
 
+/*
+ *  Adds a button to the world
+ */
 void Window::addButton(Button* button) {
     this->buttons.push_back(*button);
     button->setRenderer(renderer);
 }
 
+/*
+ *  Gets the maps dimensions
+ */
 SDL_Point Window::getMapTileDimensions() {
     SDL_Point tileDimensions = {map.getTileDimensions().x, map.getTileDimensions().y};
     return tileDimensions;
 }
 
+/*
+ *  Sets the worlds tiles to a given list of tiles
+ */
 void Window::setTiles(std::vector<Tile>* tiles) {
     this->tiles = tiles;
     for(Tile &tile : *tiles) {

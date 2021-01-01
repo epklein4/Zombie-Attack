@@ -2,6 +2,9 @@
 #include "Entity.h"
 #include "Button.h"
 
+/*
+ *  Entry point for the program
+ */
 int main(int argc, char* argv[]) {
 
     Window window((char*)"Zombie Attack", 800, 600);

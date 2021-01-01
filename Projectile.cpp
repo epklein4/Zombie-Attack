@@ -1,8 +1,9 @@
 
 #include "Projectile.h"
 
-#include <cstdio>
-
+/*
+ *  Creates a projectile(subclass of Entity) given position, dimensions, and velocity
+ */
 Projectile::Projectile(int x, int y, int width, int height, double xSpeed, double ySpeed)
 : Entity(x, y, width, height) {
     this->xSpeed = xSpeed;
@@ -14,6 +15,9 @@ Projectile::Projectile(int x, int y, int width, int height, double xSpeed, doubl
 
 Projectile::~Projectile() {}
 
+/*
+ *  Updates the projectiles movement
+ */
 void Projectile::update() {
     this->x += xSpeed;
     this->y += ySpeed;
