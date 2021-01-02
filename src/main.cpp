@@ -12,9 +12,6 @@ int main(int argc, char* argv[]) {
     bool running = true;
 
     window.startMap();
-    Player player(200, 300, 20, 20, window.getMapTileDimensions().x, window.getMapTileDimensions().y);
-
-    window.addPlayer(&player);
     
     while(running) {
         running = window.pollEvents();

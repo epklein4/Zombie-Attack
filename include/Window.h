@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include <vector>
 #include <chrono>
 #include "Player.h"
@@ -38,6 +39,8 @@ class Window {
         SDL_Point getMapTileDimensions();
         void setTiles(std::vector<Tile>* tiles);
 
+        void drawScore();
+
         bool pollEvents();
 
     private:
@@ -46,6 +49,7 @@ class Window {
         SDL_Event event;
         Mix_Music* bgMusic;
         Mix_Chunk* bulletSFX;
+        TTF_Font* scoreFont;
         SDL_Texture* cursor;
         Pathfinder* pathfinder;
         MapReader map;
@@ -59,6 +63,8 @@ class Window {
         std::vector<Zombie> zombies;
         std::vector<Button> buttons;
         std::vector<Projectile> projectiles;
+
+        int score;
 
         std::chrono::system_clock::time_point lastSpawned;
 

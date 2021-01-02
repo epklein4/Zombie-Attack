@@ -4,6 +4,9 @@
 #include "Entity.h"
 #include "Tile.h"
 #include <vector>
+#include <chrono>
+
+#define SPAWN_TIME 2000
 
 class Zombie : public Entity {
     public:
@@ -12,8 +15,16 @@ class Zombie : public Entity {
 
         void walk(SDL_Point direction);
         static Zombie* spawn(int windowWidth, int windowHeight, std::vector<Tile>* tiles);
+
+        void checkDoneSpawning();
+        void spawningGrow();
+
+        bool getSpawning();
     private:
         bool spawning;
+        std::chrono::system_clock::time_point spawnTime;
+        SDL_Rect* fullDimensions;
+        SDL_Rect* startDimensions;
 };
 
 #endif

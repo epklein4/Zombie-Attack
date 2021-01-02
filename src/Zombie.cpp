@@ -1,14 +1,21 @@
 #include "Zombie.h"
 #include <time.h>
 
+#include <cstdio>
+
 /*
  *  Creates a zombie(subclass of Entity) given position and dimensions
+ * 
+ *  Zombie starts small and grows to full size
  */ 
-Zombie::Zombie(int x, int y, int w, int h) : Entity(x, y, w, h) {
+Zombie::Zombie(int x, int y, int w, int h) : Entity(x + (w/2), y + (h/w), 0, 0) {
     this->color = {17, 118, 127, 255};
     this->xSpeed = 1;
     this->ySpeed = 1;
+    this->fullDimensions = new SDL_Rect{x, y, w, h};
+    this->startDimensions = new SDL_Rect{position.x, position.y, width, height};
     this->spawning = true;
+    this->spawnTime = std::chrono::system_clock::now();
 }
 
 Zombie::~Zombie() {}
@@ -50,3 +57,32 @@ Zombie* Zombie::spawn(int windowWidth, int windowHeight, std::vector<Tile>* tile
     }
     return nullptr;
 }
+
+/*
+ *  Checks to see if the zombie should be done spawning and sets spawning to false if so
+ */
+void Zombie::checkDoneSpawning() {
+    auto now = std::chrono::system_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - spawnTime);
+    if(elapsedTime > std::chrono::milliseconds(SPAWN_TIME)) {
+        spawning = false;
+    }
+}
+
+/*
+ *  While the zombie is still spawning, grows the zombie to full size over time;
+ */
+void Zombie::spawningGrow() {
+    auto now = std::chrono::system_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - spawnTime);
+    int time = elapsedTime.count();
+    position.x = startDimensions->x - (time * ((fullDimensions->w / 2.0) / SPAWN_TIME));
+    position.y = startDimensions->y - (time * ((fullDimensions->h / 2.0) / SPAWN_TIME));;
+    width = startDimensions->w + (time * ((double)fullDimensions->w / SPAWN_TIME));
+    height = startDimensions->h + (time * ((double)fullDimensions->h / SPAWN_TIME));
+}
+
+/*
+ *  Returns true if the zombie is still spawning
+ */
+bool Zombie::getSpawning() { return spawning; }

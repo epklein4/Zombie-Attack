@@ -8,14 +8,16 @@
 Window::Window(char* title, int width, int height) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
     this->width = width;
     this->height = height;
     this->paused = false;
+    this->restarted = false;
     this->lastSpawned = std::chrono::system_clock::now();
     window = SDL_CreateWindow(title,
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
-                              width, height, SDL_WINDOW_RESIZABLE);
+                              width, height + 20, SDL_WINDOW_RESIZABLE);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     SDL_SetWindowMinimumSize(window, 800, 600);
     SDL_SetWindowResizable(window, SDL_FALSE);
@@ -29,6 +31,8 @@ Window::Window(char* title, int width, int height) {
 
     bgMusic = Mix_LoadMUS("Resources/BG_Music.wav");
     bulletSFX = Mix_LoadWAV("Resources/BulletSFX.wav");
+
+    scoreFont = TTF_OpenFont("Resources/OpenSans-Semibold.ttf", 20);
     Mix_PlayMusic(bgMusic, -1);
 }
 
@@ -39,6 +43,7 @@ Window::~Window() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     Mix_CloseAudio();
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 }
@@ -52,6 +57,9 @@ void Window::startMap() {
     map.init("Resources/tilemap.txt", width, height);
     setTiles(map.getTiles());
     pathfinder = new Pathfinder(map.getDimensions().x, map.getDimensions().y, tiles);
+
+    this->score = 0;
+    addPlayer(new Player(200, 300, 20, 20, getMapTileDimensions().x, getMapTileDimensions().y));
 }
 
 /*
@@ -68,7 +76,11 @@ void Window::clear() {
  *  If the game is paused no updates to logic will occur
  */
 void Window::update() {
-    if(paused) {
+    if(restarted) {
+        restart();
+        if(paused) { pause(); }
+        restarted = false;
+    }else if(paused) {
     }else if(player != NULL) {
         if(zombies.size() < ZOMBIE_LIMIT) {
             spawnTimer();
@@ -91,7 +103,13 @@ void Window::update() {
             zombie.updateBoundingBox();
             SDL_Point direction = pathfinder->getPath(zombie.getPostition().x + (zombie.getDimensions().x / 2),
                                                       zombie.getPostition().y + (zombie.getDimensions().y / 2));
-            zombie.walk(direction);
+            
+            if(zombie.getSpawning()) { 
+                zombie.spawningGrow();
+                zombie.checkDoneSpawning(); 
+            }
+            if(!zombie.getSpawning()) { zombie.walk(direction); }
+
             for(Zombie &otherZ : zombies) {
                 if(&otherZ == &zombie) { continue; }
                 zombie.checkMovementCollision(otherZ.getBoundingBox());
@@ -101,11 +119,13 @@ void Window::update() {
                 zombie.checkMovementCollision(tile.getBoundingBox());   
                 zombie.updateBoundingBox();
             }
-            if(player->getBoundingBox().checkCollision(zombie.getBoundingBox())) {
-                player->kill();
-                pause();
+            if(!zombie.getSpawning()) {
+                if(player->getBoundingBox().checkCollision(zombie.getBoundingBox())) {
+                    player->kill();
+                    pause();
+                }
+                zombie.applyMovement();
             }
-            zombie.applyMovement();
         }
         for(int i = 0; i < projectiles.size(); i++) {
             projectiles.at(i).update();
@@ -123,6 +143,7 @@ void Window::update() {
                     projectiles.erase(projectiles.begin() + i);
                     j--;
                     i--;
+                    score += 100;
                     goto collided;
                 }
             }
@@ -139,7 +160,6 @@ void Window::draw() {
     int mouseX, mouseY;
     SDL_GetMouseState(&mouseX, &mouseY);
     SDL_Rect cursorRect{mouseX-8, mouseY-8, 16, 16};
-    if(player != NULL) { player->draw(); }
     for(Zombie zombie : zombies) {
         zombie.setRenderer(renderer);
         zombie.draw();
@@ -147,6 +167,7 @@ void Window::draw() {
     for(Tile tile : *tiles) { 
         tile.draw(); 
     }
+    if(player != NULL) { player->draw(); }
     for(Projectile projectile : projectiles) {
         projectile.setRenderer(renderer);
         projectile.draw();
@@ -155,6 +176,7 @@ void Window::draw() {
         button.setRenderer(renderer);
         button.draw();
     }
+    drawScore();
     SDL_RenderCopy(renderer, cursor, NULL, &cursorRect);
     SDL_RenderPresent(renderer);
 }
@@ -168,9 +190,9 @@ void Window::pause() {
     paused = !paused;
     if(paused) {
         buttons.clear();
-        Button pauseImage("PAUSE", -100, 50, 50, 300, 100);
-        Button restartButton("BUTTON_RESTART", RESTART_BUTTON, 50, 150, 192, 64);
-        Button quitButton("BUTTON_QUIT", QUIT_BUTTON, 50, 230, 192, 64);
+        Button pauseImage("PAUSE", -100, 50, 50, 600, 150);
+        Button restartButton("BUTTON_RESTART", RESTART_BUTTON, 50, 200, 240, 80);
+        Button quitButton("BUTTON_QUIT", QUIT_BUTTON, 50, 300, 240, 80);
         buttons.push_back(pauseImage);
         buttons.push_back(restartButton);
         buttons.push_back(quitButton);
@@ -189,6 +211,7 @@ void Window::restart() {
     buttons.clear();
     zombies.clear();
     projectiles.clear();
+    startMap();
 }
 
 /*
@@ -297,3 +320,14 @@ void Window::setTiles(std::vector<Tile>* tiles) {
     }
 }
 
+/*
+ *  Function to display the current score
+ */
+void Window::drawScore() {
+    char* scoreText = new char[20];
+    sprintf(scoreText, "Score  %d", score);
+    SDL_Surface* scoreImage = TTF_RenderText_Solid(scoreFont, scoreText, {0, 0, 0});
+    SDL_Rect scoreRect = {50, height - 5, scoreImage->w, scoreImage->h};
+    SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, scoreImage), NULL, &scoreRect);
+    SDL_FreeSurface(scoreImage);
+}

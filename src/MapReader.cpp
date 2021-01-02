@@ -9,7 +9,6 @@ MapReader::MapReader() {}
  * Delete the map from memory
  */
 MapReader::~MapReader() {
-    this->mapfile.close();
     for(int i = rows - 1; i >= 0; i--) {
         delete map[i];
     }
@@ -43,6 +42,8 @@ void MapReader::init(std::string mapname, int windowWidth, int windowHeight) {
     printf("Rows: %d    Cols: %d\n", rows, cols);
     generateMap();
     generateTiles();
+    
+    this->mapfile.close();
 }
 
 /*

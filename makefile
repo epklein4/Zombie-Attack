@@ -7,7 +7,7 @@ OBJS = $(addprefix $(SRC_PATH)\, $(BASE_OBJS))
 CXX = g++
 CXXFLAGS = -g -Iinclude
 LDFLAGS = -mwindows
-LDLIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer
+LDLIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 ZombieAttack: $(OBJS)
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)	
