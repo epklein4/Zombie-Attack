@@ -3,14 +3,13 @@ BASE_OBJS = main.o Window.o Entity.o Player.o Tile.o BoundingBox.o \
 
 SRC_PATH = src
 
-OBJS = $(addprefix $(SRC_PATH)\, $(BASE_OBJS))
+OBJS = $(addprefix $(SRC_PATH)/, $(BASE_OBJS))
 CXX = g++
 CXXFLAGS = -g -Iinclude
-LDFLAGS = -mwindows
-LDLIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+LDLIBS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 ZombieAttack: $(OBJS)
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)	
 
 clean:
-	del $(OBJS)
+	rm $(OBJS)
