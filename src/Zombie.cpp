@@ -80,6 +80,11 @@ void Zombie::spawningGrow() {
     position.y = startDimensions->y - (time * ((fullDimensions->h / 2.0) / SPAWN_TIME));;
     width = startDimensions->w + (time * ((double)fullDimensions->w / SPAWN_TIME));
     height = startDimensions->h + (time * ((double)fullDimensions->h / SPAWN_TIME));
+
+    if(position.x > fullDimensions->x) { position.x = fullDimensions->x; }
+    if(position.y > fullDimensions->y) { position.y = fullDimensions->y; }
+    if(width > fullDimensions->w) { width = fullDimensions->w; }
+    if(height > fullDimensions->h) { height = fullDimensions->h; }
 }
 
 /*

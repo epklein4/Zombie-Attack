@@ -15,7 +15,7 @@
 #include "Projectile.h"
 #include "Pathfinder.h"
 
-#define ZOMBIE_LIMIT 200
+#define ZOMBIE_LIMIT 2
 
 class Window {
     public:

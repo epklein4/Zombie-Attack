@@ -68,7 +68,7 @@ void Player::applyMovement() {
 Projectile* Player::fire() {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastShotTime);
-    if(elapsedTime > std::chrono::milliseconds(100)) {
+    if(elapsedTime > std::chrono::milliseconds(50)) {
         int mouseX, mouseY;
         double length;
         SDL_GetMouseState(&mouseX, &mouseY);

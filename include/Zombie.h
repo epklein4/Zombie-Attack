@@ -6,7 +6,7 @@
 #include <vector>
 #include <chrono>
 
-#define SPAWN_TIME 2000
+#define SPAWN_TIME 1500
 
 class Zombie : public Entity {
     public:
