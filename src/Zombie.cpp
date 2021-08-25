@@ -1,7 +1,7 @@
 #include "Zombie.h"
 #include <time.h>
 
-#include <cstdio>
+// #include <cstdio>
 
 /*
  *  Creates a zombie(subclass of Entity) given position and dimensions
@@ -45,8 +45,8 @@ Zombie* Zombie::spawn(int windowWidth, int windowHeight, std::vector<Tile>* tile
     
     for(int attempt = 0; attempt < maxSpawnAttempts; attempt++) {
         spawnable = true;
-        x = rand() * ((1 + windowWidth)) / (RAND_MAX + 1.0);
-        y = rand() * ((1 + windowHeight)) / (RAND_MAX + 1.0);
+        x = rand() % windowWidth;
+        y = rand() % windowHeight;
         spawnBounds.updateBoundingBox(x, y, zombieWidth, zombieHeight);
         for(Tile &tile : *tiles) {
             if(spawnBounds.checkCollision(tile.getBoundingBox())) {
@@ -80,6 +80,11 @@ void Zombie::spawningGrow() {
     position.y = startDimensions->y - (time * ((fullDimensions->h / 2.0) / SPAWN_TIME));;
     width = startDimensions->w + (time * ((double)fullDimensions->w / SPAWN_TIME));
     height = startDimensions->h + (time * ((double)fullDimensions->h / SPAWN_TIME));
+
+    if(position.x > fullDimensions->x) { position.x = fullDimensions->x; }
+    if(position.y > fullDimensions->y) { position.y = fullDimensions->y; }
+    if(width > fullDimensions->w) { width = fullDimensions->w; }
+    if(height > fullDimensions->h) { height = fullDimensions->h; }
 }
 
 /*

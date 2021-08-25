@@ -17,7 +17,7 @@ Window::Window(char* title, int width, int height) {
     window = SDL_CreateWindow(title,
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
-                              width, height + 20, SDL_WINDOW_RESIZABLE);
+                              width, height, SDL_WINDOW_RESIZABLE);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     SDL_SetWindowMinimumSize(window, 800, 600);
     SDL_SetWindowResizable(window, SDL_FALSE);
@@ -32,7 +32,7 @@ Window::Window(char* title, int width, int height) {
     bgMusic = Mix_LoadMUS("Resources/BG_Music.wav");
     bulletSFX = Mix_LoadWAV("Resources/BulletSFX.wav");
 
-    scoreFont = TTF_OpenFont("Resources/OpenSans-Semibold.ttf", 20);
+    scoreFont = TTF_OpenFont("Resources/Roboto-Bold.ttf", 24);
     Mix_PlayMusic(bgMusic, -1);
 }
 
@@ -66,7 +66,7 @@ void Window::startMap() {
  *  Clears the window
  */
 void Window::clear() {
-    SDL_SetRenderDrawColor(renderer, 240, 235, 192, 255);
+    SDL_SetRenderDrawColor(renderer, 10, 10, 10, 255);
     SDL_RenderClear(renderer);
 }
 
@@ -190,9 +190,9 @@ void Window::pause() {
     paused = !paused;
     if(paused) {
         buttons.clear();
-        Button pauseImage("PAUSE", -100, 50, 50, 600, 150);
-        Button restartButton("BUTTON_RESTART", RESTART_BUTTON, 50, 200, 240, 80);
-        Button quitButton("BUTTON_QUIT", QUIT_BUTTON, 50, 300, 240, 80);
+        Button pauseImage("PAUSE", -100, width/2 - 200, 100, 400, 120);
+        Button restartButton("BUTTON_RESTART", RESTART_BUTTON, width/2 - 80, 240, 160, 80);
+        Button quitButton("BUTTON_QUIT", QUIT_BUTTON, width/2 - 80, 350, 160, 80);
         buttons.push_back(pauseImage);
         buttons.push_back(restartButton);
         buttons.push_back(quitButton);
@@ -325,9 +325,9 @@ void Window::setTiles(std::vector<Tile>* tiles) {
  */
 void Window::drawScore() {
     char* scoreText = new char[20];
-    sprintf(scoreText, "Score  %d", score);
-    SDL_Surface* scoreImage = TTF_RenderText_Solid(scoreFont, scoreText, {0, 0, 0});
-    SDL_Rect scoreRect = {50, height - 5, scoreImage->w, scoreImage->h};
+    sprintf(scoreText, "Score:  %d", score);
+    SDL_Surface* scoreImage = TTF_RenderText_Solid(scoreFont, scoreText, {255, 255, 255});
+    SDL_Rect scoreRect = {width/2-45, 30, scoreImage->w, scoreImage->h};
     SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, scoreImage), NULL, &scoreRect);
     SDL_FreeSurface(scoreImage);
 }

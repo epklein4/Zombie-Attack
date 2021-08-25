@@ -6,7 +6,7 @@
 Player::Player(int x, int y, int w, int h, int tileWidth, int tileHeight) : Entity(x, y, w, h) {
     this->xSpeed = tileWidth / 4;
     this->ySpeed = tileHeight / 4;
-    this->color = {0, 0, 0, 255};
+    this->color = {200, 200, 200, 255};
     this->lastShotTime = std::chrono::system_clock::now();
     living = true;
     shooting = false;
@@ -68,7 +68,7 @@ void Player::applyMovement() {
 Projectile* Player::fire() {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastShotTime);
-    if(elapsedTime > std::chrono::milliseconds(100)) {
+    if(elapsedTime > std::chrono::milliseconds(400)) {
         int mouseX, mouseY;
         double length;
         SDL_GetMouseState(&mouseX, &mouseY);

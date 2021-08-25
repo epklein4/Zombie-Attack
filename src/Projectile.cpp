@@ -10,7 +10,7 @@ Projectile::Projectile(int x, int y, int width, int height, double xSpeed, doubl
     this->ySpeed = ySpeed;
     this->x = x;
     this->y = y;
-    this->color = {0, 0, 0};
+    this->color = {240, 230, 0};
 }
 
 Projectile::~Projectile() {}
